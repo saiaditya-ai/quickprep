@@ -51,3 +51,35 @@ def get_flashcards(user_id: str):
     except Exception as e:
         print(f"Error getting flashcards: {e}")
         return []
+
+def delete_flashcard(card_id: int, user_id: str):
+    """Delete a flashcard"""
+    try:
+        if not supabase:
+            print("Supabase not available, cannot delete")
+            return False
+            
+        result = supabase.table(TABLE).delete().eq("id", card_id).eq("user_id", user_id).execute()
+        success = len(result.data) > 0
+        print(f"Deleted flashcard {card_id}: {success}")
+        return success
+        
+    except Exception as e:
+        print(f"Error deleting flashcard: {e}")
+        return False
+
+def update_flashcard(card_id: int, user_id: str, updates: dict):
+    """Update a flashcard"""
+    try:
+        if not supabase:
+            print("Supabase not available, cannot update")
+            return None
+            
+        result = supabase.table(TABLE).update(updates).eq("id", card_id).eq("user_id", user_id).execute()
+        updated_card = result.data[0] if result.data else None
+        print(f"Updated flashcard {card_id}: {updated_card is not None}")
+        return updated_card
+        
+    except Exception as e:
+        print(f"Error updating flashcard: {e}")
+        return None
