@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useAuth0 } from '@auth0/auth0-react';
+// import { useAuth0 } from '@auth0/auth0-react'; // Auth0 removed
 import UploadBox from '../components/UploadBox';
 import FlashcardDeck from '../components/FlashcardDeck';
 import apiService from '../services/api';
 
 const Flashcards = () => {
-  const { user } = useAuth0();
+  // const { user } = useAuth0(); // Auth0 removed
   const [flashcards, setFlashcards] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);

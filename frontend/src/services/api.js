@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { getAuth0Token } from './auth';
+// import { getAuth0Token } from './auth'; // Auth0 removed
 
 // API Configuration
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:8000';
@@ -17,14 +17,7 @@ const apiClient = axios.create({
 // Request interceptor to add auth token
 apiClient.interceptors.request.use(
   async (config) => {
-    try {
-      const token = await getAuth0Token();
-      if (token) {
-        config.headers.Authorization = `Bearer ${token}`;
-      }
-    } catch (error) {
-      console.error('Error getting auth token:', error);
-    }
+    // Auth0 removed - no authentication required
     return config;
   },
   (error) => {
@@ -130,16 +123,9 @@ const apiService = {
    */
   async getUserFlashcards(limit = 50) {
     try {
-      // For now, we'll simulate this with a search for empty query
-      // In a real implementation, you'd have a dedicated endpoint
-      const response = await apiClient.post('/search-flashcards', {
-        query: '',
-        limit,
-      });
-
-      return response.data.results || [];
+      const response = await apiClient.get('/flashcards/');
+      return response.data.flashcards || [];
     } catch (error) {
-      // If search fails, return empty array
       console.warn('Failed to load user flashcards:', error.message);
       return [];
     }

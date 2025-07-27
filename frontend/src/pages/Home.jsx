@@ -1,9 +1,9 @@
 import React from 'react';
-import { useAuth0 } from '@auth0/auth0-react';
 import { motion } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 
 const Home = () => {
-  const { loginWithRedirect } = useAuth0();
+  const navigate = useNavigate();
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -93,7 +93,7 @@ const Home = () => {
           variants={itemVariants}
           whileHover={{ scale: 1.05, y: -2 }}
           whileTap={{ scale: 0.95 }}
-          onClick={() => loginWithRedirect()}
+          onClick={() => navigate('/flashcards')}
           className="bg-gradient-to-r from-primary-600 to-purple-600 hover:from-primary-700 hover:to-purple-700 text-white font-bold py-4 px-8 rounded-xl text-lg shadow-lg transition-all duration-200"
         >
           Get Started Free
@@ -160,7 +160,7 @@ const Home = () => {
         variants={itemVariants}
         className="mt-20 text-gray-500 text-sm"
       >
-        <p>Powered by Auth0, Supabase, and Hugging Face 🤝</p>
+        <p>Powered by Supabase and Hugging Face 🤝</p>
       </motion.div>
     </motion.div>
   );

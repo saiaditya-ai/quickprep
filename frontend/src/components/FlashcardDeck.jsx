@@ -80,21 +80,19 @@ const FlashcardDeck = ({ flashcards, onDeleteCard }) => {
           <div className="flex rounded-lg border border-gray-300 overflow-hidden">
             <button
               onClick={() => setViewMode('deck')}
-              className={`px-3 py-1 text-sm font-medium transition-colors ${
-                viewMode === 'deck'
-                  ? 'bg-primary-600 text-white'
-                  : 'bg-white text-gray-600 hover:bg-gray-50'
-              }`}
+              className={`px-3 py-1 text-sm font-medium transition-colors ${viewMode === 'deck'
+                ? 'bg-primary-600 text-white'
+                : 'bg-white text-gray-600 hover:bg-gray-50'
+                }`}
             >
               Deck
             </button>
             <button
               onClick={() => setViewMode('grid')}
-              className={`px-3 py-1 text-sm font-medium transition-colors ${
-                viewMode === 'grid'
-                  ? 'bg-primary-600 text-white'
-                  : 'bg-white text-gray-600 hover:bg-gray-50'
-              }`}
+              className={`px-3 py-1 text-sm font-medium transition-colors ${viewMode === 'grid'
+                ? 'bg-primary-600 text-white'
+                : 'bg-white text-gray-600 hover:bg-gray-50'
+                }`}
             >
               Grid
             </button>
@@ -178,9 +176,8 @@ const FlashcardDeck = ({ flashcards, onDeleteCard }) => {
                   whileHover={{ scale: 1.2 }}
                   whileTap={{ scale: 0.8 }}
                   onClick={() => goToCard(index)}
-                  className={`w-2 h-2 rounded-full transition-colors ${
-                    index === currentIndex ? 'bg-primary-600' : 'bg-gray-300'
-                  }`}
+                  className={`w-2 h-2 rounded-full transition-colors ${index === currentIndex ? 'bg-primary-600' : 'bg-gray-300'
+                    }`}
                 />
               ))}
               {filteredFlashcards.length > 10 && (
