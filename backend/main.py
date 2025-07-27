@@ -42,7 +42,20 @@ async def test_gemini():
         
         import google.generativeai as genai
         genai.configure(api_key=GEMINI_API_KEY)
-        model = genai.GenerativeModel('gemini-pro')
+        
+        # Try different model names
+        model_names = ['gemini-1.5-flash', 'gemini-1.5-pro', 'gemini-pro']
+        
+        model = None
+        for model_name in model_names:
+            try:
+                model = genai.GenerativeModel(model_name)
+                break
+            except:
+                continue
+        
+        if not model:
+            return {"status": "error", "message": "No valid Gemini model found"}
         
         # Simple test
         response = model.generate_content("Create 1 flashcard about mathematics. Return as JSON: [{\"question\": \"...\", \"answer\": \"...\"}]")

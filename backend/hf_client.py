@@ -2,7 +2,7 @@ import os, json, re
 import hashlib
 
 HF_TOKEN = os.getenv("HF_API_TOKEN")
-GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY") or "AIzaSyCL15_Dh8QA2XrR2H0IgbFJdOlYTHpFBVo"
 
 # Advanced flashcard generation without AI
 def generate_flashcards_fallback(text: str, n_cards: int = 5):
@@ -198,7 +198,22 @@ def generate_flashcards_with_gemini(text: str, n_cards: int = 5):
         
         # Configure Gemini
         genai.configure(api_key=GEMINI_API_KEY)
-        model = genai.GenerativeModel('gemini-pro')
+        
+        # Try different model names
+        model_names = ['gemini-1.5-flash', 'gemini-1.5-pro', 'gemini-pro', 'models/gemini-1.5-flash']
+        
+        model = None
+        for model_name in model_names:
+            try:
+                model = genai.GenerativeModel(model_name)
+                print(f"✅ Using Gemini model: {model_name}")
+                break
+            except Exception as e:
+                print(f"❌ Model {model_name} failed: {e}")
+                continue
+        
+        if not model:
+            raise Exception("No valid Gemini model found")
         
         prompt = f"""
         Create {n_cards} high-quality flashcards from the following text. 
