@@ -2,7 +2,7 @@ import os, json, re
 import hashlib
 
 HF_TOKEN = os.getenv("HF_API_TOKEN")
-GEMINI_API_KEY = os.getenv("GEMINI_API_KEY") or "AIzaSyCL15_Dh8QA2XrR2H0IgbFJdOlYTHpFBVo"
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 
 # Advanced flashcard generation without AI
 def generate_flashcards_fallback(text: str, n_cards: int = 5):
