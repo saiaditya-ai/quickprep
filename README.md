@@ -1,6 +1,6 @@
 # ⚡ QuickPrep – AI-Powered Flashcard Generator from PDFs
 
-![QuickPrep Banner](https://quickprep-murex.vercel.app/)
+Visit it here https://quickprep-murex.vercel.app/
 
 QuickPrep is a smart and minimalist web app that helps students **instantly generate study flashcards** from any uploaded PDF (e.g., class notes, slides, textbooks). Powered by **Gemini AI** and vector search, it makes studying faster, focused, and interactive — all without needing to log in.
 
