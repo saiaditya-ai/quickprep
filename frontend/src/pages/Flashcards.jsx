@@ -13,18 +13,28 @@ const Flashcards = () => {
   const [success, setSuccess] = useState(null);
 
   useEffect(() => {
+    console.log('Flashcards component mounted, starting to load flashcards...');
     loadUserFlashcards();
   }, []);
 
   const loadUserFlashcards = async () => {
     try {
+      console.log('Starting to load flashcards...');
       setLoading(true);
+      
+      console.log('Calling apiService.getUserFlashcards()...');
       const userFlashcards = await apiService.getUserFlashcards();
+      
+      console.log('Received flashcards:', userFlashcards);
       setFlashcards(userFlashcards);
+      
+      console.log('Flashcards loaded successfully');
     } catch (error) {
       console.error('Error loading flashcards:', error);
-      setError('Failed to load your flashcards');
+      setError('Failed to load your flashcards: ' + error.message);
+      setFlashcards([]);
     } finally {
+      console.log('Setting loading to false');
       setLoading(false);
     }
   };

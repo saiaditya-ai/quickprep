@@ -83,7 +83,7 @@ const apiService = {
       const formData = new FormData();
       formData.append('file', file);
 
-      const response = await apiClient.post('/upload-pdf', formData, {
+      const response = await apiClient.post('/upload-pdf/', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
@@ -123,11 +123,13 @@ const apiService = {
    */
   async getUserFlashcards(limit = 50) {
     try {
+      console.log('API: Making request to /flashcards/');
       const response = await apiClient.get('/flashcards/');
+      console.log('API: Received response:', response.data);
       return response.data.flashcards || [];
     } catch (error) {
-      console.warn('Failed to load user flashcards:', error.message);
-      return [];
+      console.error('API: Failed to load user flashcards:', error);
+      throw error; // Re-throw so the component can handle it
     }
   },
 

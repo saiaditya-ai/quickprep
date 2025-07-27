@@ -108,7 +108,7 @@ const FlashcardDeck = ({ flashcards, onDeleteCard }) => {
           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
         >
           <AnimatePresence>
-            {filteredFlashcards.map((flashcard, index) => (
+            {filteredFlashcards.map((flashcard) => (
               <Flashcard
                 key={flashcard.id}
                 flashcard={flashcard}
