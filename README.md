@@ -10,7 +10,7 @@ QuickPrep is a smart and minimalist web app that helps students **instantly gene
 
 ## 📽️ Demo Video
 
-[![Watch the Demo](https://www.youtube.com/watch?v=VIDEO_ID_HERE)
+https://youtu.be/fR2-mQEPmCQ
 
 > 🎥 Click the thumbnail above to watch a quick walkthrough!
 
