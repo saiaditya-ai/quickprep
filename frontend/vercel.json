@@ -25,7 +25,7 @@
     "REACT_APP_AUTH0_DOMAIN": "dev-ehl1tbo8bwj3d0zf.us.auth0.com",
     "REACT_APP_AUTH0_CLIENT_ID": "Dak0LKjxOgYdJ3dnxdxTwwk7esBajxLr",
     "REACT_APP_AUTH0_AUDIENCE": "https://quickprep-api",
-    "REACT_APP_API_BASE_URL": "https://your-render-app-name.onrender.com",
-    "REACT_APP_AUTH0_REDIRECT_URI": "https://your-vercel-app.vercel.app"
+    "REACT_APP_API_BASE_URL": "https://quickprep-kgfv.onrender.com",
+    "REACT_APP_AUTH0_REDIRECT_URI": "https://quickprep-murex.vercel.app"
   }
 }

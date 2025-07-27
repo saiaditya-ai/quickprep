@@ -13,14 +13,24 @@ from db import save_flashcard
 app = FastAPI()
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],    
+    allow_origins=[
+        "http://localhost:3000",  # Local development
+        "https://quickprep-murex.vercel.app",  # Current Vercel frontend
+        "https://quickprep-kgfv.onrender.com"  # Your Render backend
+    ],
+    allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
 @app.get("/")
 def root():
-    return {"status": "QuickPrep backend (HF edition) online"}
+    return {
+        "status": "QuickPrep backend (HF edition) online",
+        "message": "Backend is running on Render",
+        "cors_enabled": True,
+        "endpoints": ["/", "/test-hf", "/upload-pdf", "/flashcards", "/search-flashcards"]
+    }
 
 @app.post("/upload-pdf/")
 async def upload_pdf(file: UploadFile = File(...)):
