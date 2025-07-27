@@ -22,9 +22,10 @@
     }
   ],
   "env": {
-    "REACT_APP_AUTH0_DOMAIN": "@react_app_auth0_domain",
-    "REACT_APP_AUTH0_CLIENT_ID": "@react_app_auth0_client_id",
-    "REACT_APP_AUTH0_AUDIENCE": "@react_app_auth0_audience",
-    "REACT_APP_API_BASE_URL": "@react_app_api_base_url"
+    "REACT_APP_AUTH0_DOMAIN": "dev-ehl1tbo8bwj3d0zf.us.auth0.com",
+    "REACT_APP_AUTH0_CLIENT_ID": "Dak0LKjxOgYdJ3dnxdxTwwk7esBajxLr",
+    "REACT_APP_AUTH0_AUDIENCE": "https://quickprep-api",
+    "REACT_APP_API_BASE_URL": "https://your-render-app-name.onrender.com",
+    "REACT_APP_AUTH0_REDIRECT_URI": "https://your-vercel-app.vercel.app"
   }
 }

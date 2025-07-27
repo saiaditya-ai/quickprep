@@ -8,7 +8,7 @@ services:
       - key: AUTH0_DOMAIN
         value: dev-ehl1tbo8bwj3d0zf.us.auth0.com
       - key: AUTH0_API_AUDIENCE
-        value: https://your-api-audience
+        value: https://quickprep-api
       - key: AUTH0_CLIENT_ID
         value: Dak0LKjxOgYdJ3dnxdxTwwk7esBajxLr
       - key: AUTH0_CLIENT_SECRET
