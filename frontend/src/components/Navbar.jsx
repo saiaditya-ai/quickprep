@@ -23,7 +23,7 @@ const Navbar = () => {
 
           {/* Navigation Items */}
           <div className="flex items-center space-x-4">
-            <span className="text-sm text-gray-600">No authentication required</span>
+            {/* Navigation items can be added here if needed */}
           </div>
         </div>
       </div>

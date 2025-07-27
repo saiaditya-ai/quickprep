@@ -24,11 +24,15 @@ def save_flashcard(user_id: str, card: dict, embedding: list):
             print("Supabase not available, skipping save")
             return
             
+        from datetime import datetime
+        
         result = supabase.table(TABLE).insert({
             "user_id":   user_id,
             "question":  card["question"],
             "answer":    card["answer"],
             "embedding": embedding,
+            "created_at": datetime.utcnow().isoformat(),
+            "difficulty": card.get("difficulty", "medium")
         }).execute()
         
         print(f"Flashcard saved successfully: {card['question'][:50]}...")

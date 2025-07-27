@@ -125,7 +125,10 @@ const Flashcard = ({ flashcard, onDelete }) => {
 
             <div className="flex justify-between items-end">
               <span className="text-xs text-gray-500">
-                {new Date(flashcard.created_at).toLocaleDateString()}
+                {flashcard.created_at ? 
+                  new Date(flashcard.created_at).toLocaleDateString() : 
+                  'Recently created'
+                }
               </span>
               <motion.div
                 animate={isHovered ? { x: -5 } : { x: 0 }}

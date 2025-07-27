@@ -16,7 +16,8 @@ def generate_flashcards_fallback(text: str, n_cards: int = 5):
             answer = sentence[:200] + "..." if len(sentence) > 200 else sentence
             flashcards.append({
                 "question": question,
-                "answer": answer
+                "answer": answer,
+                "difficulty": "medium"
             })
     
     return flashcards
