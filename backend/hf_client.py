@@ -2,6 +2,7 @@ import os, json, re
 import hashlib
 
 HF_TOKEN = os.getenv("HF_API_TOKEN")
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 
 # Advanced flashcard generation without AI
 def generate_flashcards_fallback(text: str, n_cards: int = 5):
@@ -190,49 +191,95 @@ def clean_flashcard(card):
         "difficulty": card.get("difficulty", "medium")
     }
 
-def generate_flashcards(text: str, n_cards: int = 5):
-    """Generate flashcards - fallback to simple method if HF fails"""
+def generate_flashcards_with_gemini(text: str, n_cards: int = 5):
+    """Generate high-quality flashcards using Google Gemini API"""
     try:
-        if not HF_TOKEN:
-            print("No HF token found, using fallback method")
-            cards = generate_flashcards_fallback(text, n_cards)
-            return [clean_flashcard(card) for card in cards]
+        import google.generativeai as genai
         
-        # Try to use HF API
-        from huggingface_hub import InferenceClient
+        # Configure Gemini
+        genai.configure(api_key=GEMINI_API_KEY)
+        model = genai.GenerativeModel('gemini-pro')
         
-        chat_client = InferenceClient(
-            model="mistralai/Mistral-7B-Instruct-v0.3",
-            token=HF_TOKEN,
-        )
+        prompt = f"""
+        Create {n_cards} high-quality flashcards from the following text. 
+
+        REQUIREMENTS:
+        - Questions should be clear, specific, and testable (10-80 characters)
+        - Answers should be concise and accurate (10-150 characters)
+        - Focus on key concepts, definitions, facts, and important information
+        - Avoid yes/no questions
+        - Make questions that test understanding, not just memorization
+
+        OUTPUT FORMAT:
+        Return ONLY a valid JSON array in this exact format:
+        [
+            {{"question": "What is...?", "answer": "Brief accurate answer"}},
+            {{"question": "How does...?", "answer": "Brief explanation"}},
+            {{"question": "Why is...?", "answer": "Brief reason"}}
+        ]
+
+        TEXT TO PROCESS:
+        {text[:4000]}
+
+        Generate exactly {n_cards} flashcards as a JSON array:
+        """
         
-        prompt = (
-            f"Create {n_cards} concise flashcards from the text below.\n"
-            "RULES:\n"
-            "- Questions should be short (max 15 words)\n"
-            "- Answers should be brief (max 25 words)\n"
-            "- Focus on key concepts, definitions, and important facts\n"
-            "- Make questions specific and testable\n"
-            "Return **ONLY** a JSON list in the form:\n"
-            "[{\"question\":\"What is...?\",\"answer\":\"Brief answer here\"}, ...]\n\n"
-            f"=== TEXT START ===\n{text[:2000]}\n=== TEXT END ==="
-        )
+        print("🚀 Making Gemini API call...")
+        response = model.generate_content(prompt)
         
-        raw = chat_client.text_generation(
-            prompt,
-            max_new_tokens=512,
-            temperature=0.2,
-        )
+        print(f"📥 Gemini response: {response.text[:300]}...")
         
-        # Grab first JSON structure that looks like a list of dicts
-        json_str = re.search(r"\[[\s\S]*\]", raw).group(0)
+        # Extract JSON from response
+        json_match = re.search(r'\[[\s\S]*\]', response.text)
+        if not json_match:
+            raise Exception("No JSON array found in Gemini response")
+        
+        json_str = json_match.group(0)
         cards = json.loads(json_str)
-        return [clean_flashcard(card) for card in cards]
+        
+        # Validate and clean cards
+        valid_cards = []
+        for card in cards:
+            if isinstance(card, dict) and 'question' in card and 'answer' in card:
+                question = card['question'].strip()
+                answer = card['answer'].strip()
+                
+                if len(question) > 5 and len(answer) > 5:
+                    valid_cards.append({
+                        "question": question,
+                        "answer": answer,
+                        "difficulty": "medium"
+                    })
+        
+        print(f"✅ Gemini API success! Generated {len(valid_cards)} valid cards")
+        return valid_cards[:n_cards]
         
     except Exception as e:
-        print(f"HF API failed: {e}, using fallback method")
-        cards = generate_flashcards_fallback(text, n_cards)
-        return [clean_flashcard(card) for card in cards]
+        print(f"❌ Gemini API failed: {e}")
+        raise
+
+def generate_flashcards(text: str, n_cards: int = 5):
+    """Generate flashcards - try Gemini first, then fallback"""
+    print(f"=== FLASHCARD GENERATION DEBUG ===")
+    print(f"GEMINI_API_KEY present: {bool(GEMINI_API_KEY)}")
+    print(f"HF_TOKEN present: {bool(HF_TOKEN)}")
+    print(f"Text length: {len(text)}")
+    print(f"Requested cards: {n_cards}")
+    
+    # Try Gemini API first (best quality)
+    if GEMINI_API_KEY:
+        try:
+            print("🌟 Trying Gemini API...")
+            cards = generate_flashcards_with_gemini(text, n_cards)
+            return [clean_flashcard(card) for card in cards]
+        except Exception as e:
+            print(f"❌ Gemini API failed: {e}")
+    
+    # Fallback to local method
+    print("🔄 Using local fallback method...")
+    cards = generate_flashcards_fallback(text, n_cards)
+    print(f"✅ Local fallback success! Generated {len(cards)} cards")
+    return [clean_flashcard(card) for card in cards]
 
 def get_embedding(text: str):
     """Generate embedding - fallback to hash if HF fails"""

@@ -29,8 +29,36 @@ def root():
         "status": "QuickPrep backend (HF edition) online",
         "message": "Backend is running on Render",
         "cors_enabled": True,
-        "endpoints": ["/", "/test-hf", "/upload-pdf", "/flashcards", "/search-flashcards"]
+        "endpoints": ["/", "/test-gemini", "/test-hf", "/upload-pdf", "/flashcards", "/search-flashcards"]
     }
+
+@app.get("/test-gemini")
+async def test_gemini():
+    """Test Google Gemini API connection"""
+    try:
+        from hf_client import GEMINI_API_KEY
+        if not GEMINI_API_KEY:
+            return {"status": "error", "message": "No Gemini API key found"}
+        
+        import google.generativeai as genai
+        genai.configure(api_key=GEMINI_API_KEY)
+        model = genai.GenerativeModel('gemini-pro')
+        
+        # Simple test
+        response = model.generate_content("Create 1 flashcard about mathematics. Return as JSON: [{\"question\": \"...\", \"answer\": \"...\"}]")
+        
+        return {
+            "status": "success", 
+            "message": "Gemini API working",
+            "test_response": response.text[:200] + "..." if len(response.text) > 200 else response.text
+        }
+        
+    except Exception as e:
+        return {
+            "status": "error", 
+            "message": f"Gemini API failed: {str(e)}",
+            "error_type": type(e).__name__
+        }
 
 @app.post("/upload-pdf/")
 async def upload_pdf(file: UploadFile = File(...)):
