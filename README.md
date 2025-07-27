@@ -1,4 +1,4 @@
-# ⚡ QuickPrep – AI-Powered Flashcard Generator from PDFs
+# ⚡ QuickPrep – AI-Powered Flashcard Generator from PDFs(My first project)
 
 Visit it here https://quickprep-murex.vercel.app/
 
