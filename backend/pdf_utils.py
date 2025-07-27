@@ -1,15 +1,16 @@
 """
-PDF Text Extraction using PyMuPDF
+PDF Text Extraction using PyPDF2
 Extracts clean text from PDF files for flashcard generation
 """
 
-import fitz  # PyMuPDF
+import PyPDF2
 from typing import Dict
 import re
+import io
 
 def extract_text_from_pdf(pdf_content: bytes) -> str:
     """
-    Extract text from PDF using PyMuPDF
+    Extract text from PDF using PyPDF2
 
     Args:
         pdf_content: PDF file content as bytes
@@ -18,22 +19,23 @@ def extract_text_from_pdf(pdf_content: bytes) -> str:
         Extracted text as string
     """
     try:
-        # Open PDF from bytes
-        doc = fitz.open(stream=pdf_content, filetype="pdf")
+        # Create a BytesIO object from the PDF content
+        pdf_stream = io.BytesIO(pdf_content)
+        
+        # Create PDF reader object
+        pdf_reader = PyPDF2.PdfReader(pdf_stream)
 
         text_content = []
 
         # Extract text from each page
-        for page_num in range(len(doc)):
-            page = doc.load_page(page_num)
-
-            # Extract text with proper sorting for reading order
-            text = page.get_text(sort=True)
+        for page_num in range(len(pdf_reader.pages)):
+            page = pdf_reader.pages[page_num]
+            
+            # Extract text from the page
+            text = page.extract_text()
 
             if text.strip():  # Only add non-empty pages
                 text_content.append(text)
-
-        doc.close()
 
         # Join all pages with page breaks
         full_text = "\n\n".join(text_content)
@@ -85,20 +87,20 @@ def get_text_metadata(pdf_content: bytes) -> Dict:
         Dictionary with PDF metadata
     """
     try:
-        doc = fitz.open(stream=pdf_content, filetype="pdf")
+        pdf_stream = io.BytesIO(pdf_content)
+        pdf_reader = PyPDF2.PdfReader(pdf_stream)
 
         metadata = {
-            "page_count": len(doc),
-            "title": doc.metadata.get("title", ""),
-            "author": doc.metadata.get("author", ""),
-            "subject": doc.metadata.get("subject", ""),
-            "creator": doc.metadata.get("creator", ""),
-            "producer": doc.metadata.get("producer", ""),
-            "creation_date": doc.metadata.get("creationDate", ""),
-            "modification_date": doc.metadata.get("modDate", "")
+            "page_count": len(pdf_reader.pages),
+            "title": pdf_reader.metadata.get("/Title", "") if pdf_reader.metadata else "",
+            "author": pdf_reader.metadata.get("/Author", "") if pdf_reader.metadata else "",
+            "subject": pdf_reader.metadata.get("/Subject", "") if pdf_reader.metadata else "",
+            "creator": pdf_reader.metadata.get("/Creator", "") if pdf_reader.metadata else "",
+            "producer": pdf_reader.metadata.get("/Producer", "") if pdf_reader.metadata else "",
+            "creation_date": pdf_reader.metadata.get("/CreationDate", "") if pdf_reader.metadata else "",
+            "modification_date": pdf_reader.metadata.get("/ModDate", "") if pdf_reader.metadata else ""
         }
 
-        doc.close()
         return metadata
 
     except Exception as e:
