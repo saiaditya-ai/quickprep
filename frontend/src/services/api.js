@@ -140,10 +140,12 @@ const apiService = {
    */
   async deleteFlashcard(cardId) {
     try {
-      // Note: This endpoint would need to be implemented in the backend
+      console.log(`API: Deleting flashcard ${cardId}`);
       const response = await apiClient.delete(`/flashcards/${cardId}`);
+      console.log('API: Delete response:', response.data);
       return response.data.success || true;
     } catch (error) {
+      console.error('API: Delete failed:', error);
       throw new Error(`Failed to delete flashcard: ${error.message}`);
     }
   },
