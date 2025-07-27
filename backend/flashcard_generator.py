@@ -195,13 +195,8 @@ def generate_flashcards(text: str, max_cards: int = 20) -> List[Dict[str, str]]:
         List of flashcard dictionaries with question, answer, and metadata
     """
     try:
-        # Try AI-based generation first
-        flashcards = generate_flashcards_with_ai(text, max_cards)
-
-        # If AI generation fails or produces few results, use rule-based approach
-        if len(flashcards) < max_cards // 2:
-            rule_based_cards = generate_flashcards_rule_based(text, max_cards - len(flashcards))
-            flashcards.extend(rule_based_cards)
+        # Use rule-based approach for reliable deployment
+        flashcards = generate_flashcards_rule_based(text, max_cards)
 
         # Add metadata to each flashcard
         for i, card in enumerate(flashcards):
@@ -213,5 +208,4 @@ def generate_flashcards(text: str, max_cards: int = 20) -> List[Dict[str, str]]:
 
     except Exception as e:
         print(f"Error in flashcard generation: {e}")
-        # Fallback to rule-based approach
-        return generate_flashcards_rule_based(text, max_cards)
+        return []

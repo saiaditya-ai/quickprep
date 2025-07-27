@@ -4,7 +4,8 @@ Handles storing and searching flashcards with embeddings using pgvector
 """
 
 from supabase import create_client, Client
-from sentence_transformers import SentenceTransformer
+# from sentence_transformers import SentenceTransformer
+import hashlib
 from typing import List, Dict, Optional
 import os
 import asyncio
@@ -24,26 +25,34 @@ supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 embedding_model = None
 
 def get_embedding_model():
-    """Initialize and return the embedding model"""
-    global embedding_model
-    if embedding_model is None:
-        # Using a lightweight, fast model for embeddings
-        embedding_model = SentenceTransformer('sentence-transformers/all-MiniLM-L6-v2')
-    return embedding_model
+    """Placeholder for embedding model"""
+    return None
 
 def generate_embedding(text: str) -> List[float]:
     """
-    Generate embedding for text using SentenceTransformers
+    Generate simple hash-based embedding for text (simplified for deployment)
 
     Args:
         text: Input text
 
     Returns:
-        Embedding vector as list of floats
+        Simple embedding vector as list of floats
     """
-    model = get_embedding_model()
-    embedding = model.encode(text, convert_to_tensor=False)
-    return embedding.tolist()
+    # Create a simple hash-based embedding (384 dimensions to match expected format)
+    hash_obj = hashlib.md5(text.encode())
+    hash_hex = hash_obj.hexdigest()
+    
+    # Convert hex to numbers and normalize to create embedding-like vector
+    embedding = []
+    for i in range(0, len(hash_hex), 2):
+        val = int(hash_hex[i:i+2], 16) / 255.0  # Normalize to 0-1
+        embedding.append(val)
+    
+    # Pad to 384 dimensions (repeat pattern)
+    while len(embedding) < 384:
+        embedding.extend(embedding[:min(16, 384 - len(embedding))])
+    
+    return embedding[:384]
 
 async def store_flashcards(flashcards: List[Dict], user_id: str) -> List[Dict]:
     """
@@ -101,7 +110,7 @@ async def store_flashcards(flashcards: List[Dict], user_id: str) -> List[Dict]:
 
 async def search_flashcards(query: str, user_id: str, limit: int = 10) -> List[Dict]:
     """
-    Search flashcards using vector similarity
+    Search flashcards using simple text matching (simplified for deployment)
 
     Args:
         query: Search query
@@ -109,19 +118,17 @@ async def search_flashcards(query: str, user_id: str, limit: int = 10) -> List[D
         limit: Maximum number of results
 
     Returns:
-        List of matching flashcards with similarity scores
+        List of matching flashcards
     """
     try:
-        # Generate embedding for search query
-        query_embedding = generate_embedding(query)
-
-        # Use Supabase RPC to call the match_flashcards function
-        result = supabase.rpc("match_flashcards", {
-            "query_embedding": query_embedding,
-            "match_threshold": 0.3,  # Minimum similarity threshold
-            "match_count": limit,
-            "user_id_filter": user_id
-        }).execute()
+        # Simple text search using ilike (case-insensitive LIKE)
+        result = supabase.table("flashcards")\
+            .select("id, question, answer, source_text, difficulty, created_at")\
+            .eq("user_id", user_id)\
+            .or_(f"question.ilike.%{query}%,answer.ilike.%{query}%,source_text.ilike.%{query}%")\
+            .order("created_at", desc=True)\
+            .limit(limit)\
+            .execute()
 
         return result.data if result.data else []
 

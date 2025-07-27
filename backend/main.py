@@ -39,7 +39,17 @@ security = HTTPBearer()
 @app.get("/")
 async def root():
     """Health check endpoint"""
-    return {"message": "QuickPrep API is running!"}
+    return {"message": "QuickPrep API is running!", "status": "healthy"}
+
+@app.get("/health")
+async def health_check():
+    """Detailed health check"""
+    return {
+        "status": "healthy",
+        "service": "QuickPrep API",
+        "version": "1.0.0",
+        "environment": os.getenv("ENVIRONMENT", "development")
+    }
 
 @app.post("/upload-pdf", response_model=FlashcardResponse)
 async def upload_pdf(
